@@ -12,7 +12,7 @@ path=''
 for l in list:
     path=path+'\\'+l
 path=path[1:]
-format=input("请输入想转化的格式，xlsx或者csv")
+format=input("请输入想转化的格式，xlsx或者csv\n")
 if format=='csv':
     path=path+"\\"+filename+'.csv'
     #将DataFrame转为Excel
