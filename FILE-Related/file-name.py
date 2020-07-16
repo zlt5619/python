@@ -1,6 +1,7 @@
 #给出输入路径
 #将路径里的非目录文件，取其名字
 #输出到excel表格中
+#只把文件夹内部所有文件名生成
 import os
 import xlwt
 path=input("请输入相关路径\n")
