@@ -25,3 +25,4 @@ right_leg=leg.right_leg()
 
 person=Person(head,body,left_arm,right_arm,left_leg,right_leg)
 person.move()
+person.head.say()
