@@ -10,3 +10,5 @@ db=pymysql.connect("localhost","root","123456")
 cursor=db.cursor()
 
 cursor.execute("CREATE DATABASE demo")
+
+db.close()
