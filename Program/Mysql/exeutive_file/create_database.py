@@ -1,6 +1,6 @@
 import pymysql
 
-database=input("请输入想连接的数据库")
+database=input("请输入想连接的数据库:")
 
 if database==None:
     db=pymysql.connect("localhost","root","123456","demo")
