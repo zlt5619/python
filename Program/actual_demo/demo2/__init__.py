@@ -1,1 +1,1 @@
-__all__=['gui','EXCEL','cad']
+__all__=['main','gui','EXCEL','cad']
