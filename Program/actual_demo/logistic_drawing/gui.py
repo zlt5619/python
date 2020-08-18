@@ -32,7 +32,5 @@ def add_combobox(i):
 B1=Button(root,text="+",command=lambda :add_combobox(i))
 B1.place(x=285+len(i)*105,y=20)
 root.mainloop()
-while(i==[]):
-    pass
-print(i)
+
 

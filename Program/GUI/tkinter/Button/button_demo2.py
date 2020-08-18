@@ -15,5 +15,9 @@ B = tkinter.Button(top, text="点我", command=lambda :print_positon(B))
 B.place(x=100,y=100)
 
 
+print(B.place_info())
+print(type(B.place_info()))
+print(B.place_info()["x"])
+print(B.place_info()["y"])
 
 top.mainloop()
