@@ -1,0 +1,19 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import tkinter
+
+
+top = tkinter.Tk()
+
+
+def print_positon(Button):
+    Button.place(x=200,y=100)
+
+
+B = tkinter.Button(top, text="点我", command=lambda :print_positon(B))
+
+B.place(x=100,y=100)
+
+
+
+top.mainloop()
