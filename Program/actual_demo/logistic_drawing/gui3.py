@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askopenfilenames
 import xlrd
+import pandas as pd
 
 root=Tk(className="仪表逻辑图")
 root_X="800"
@@ -28,6 +29,10 @@ Y=75
 N=[1,1,1,1]
 str1=["&&","||"]
 zhongjianxinhao=[]
+
+
+
+
 for i in range(100):
     zhongjianxinhao.append("中间信号"+str(i))
 
@@ -70,17 +75,28 @@ def addEntry(Button1,Button2,N):
 
 def compare_in_list(print_info, input_signal, output_signal):
     a=1
+    # print(print_info)
+    # print(output_signal)
+    # print(input_signal)
     for i in range(len(print_info)):
+        # if i==0:
+        #     if print_info[i] not in output_signal:
+        #         a=0
+        #         print("erroe1")
+        # elif i%2==1:
+        #     if print_info[i] not in input_signal :
+        #         a=0
+        #         print("erroe2")
+        # else:
+        #     pass
         if i==0:
             if print_info[i] not in output_signal:
                 a=0
                 print("erroe1")
         elif i%2==1:
-            if print_info[i] not in input_signal or print_info[i] not in zhongjianxinhao:
+            if print_info[i] not in input_signal and print_info[i] not in output_signal :
                 a=0
                 print("erroe2")
-        else:
-            pass
     return a
 
 def getinfo():
@@ -102,6 +118,9 @@ def getinfo():
             else:
                 pass
         print(print_str_1+print_str_2)
+        demo_excel=print_str_1+print_str_2
+        df = pd.DataFrame([demo_excel], columns=['1'], index=['a'])
+        df.to_excel('excel_output.xls')
     else:
         print("error")
 L1 = Label(root, text="输入信号:")
