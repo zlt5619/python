@@ -75,29 +75,25 @@ def subBox(frame,button1,button2,button3):
 #再画一行
 def draw_another_row(frame,buttom3):
     input_list=[]
-    row=frame.row[-1]
+    row=len(frame.row)
     current_row=buttom3.grid_info()['row']
     column=buttom3.grid_info()['column']
     L1 = Label(f1, text="√", width=3)
-    L1.grid(row=row, column=column + 1)
+    L1.grid(row=current_row, column=column + 1)
     for i in range(len(frame.element[current_row])):
         if i==0:
             pass
         else:
-            input_list.append(frame.element[row][i].get())
-    print(input_list)
-    print(current_row)
-    print(row)
-    for i in range(len(input_list)):
-        if "信号" in input_list[i] :
-            row+=1
-            frame.row.append(row)
-            print(frame.row)
-            draw_basic_function(frame,text=input_list[i])
+            input_list.append(frame.element[current_row][i].get())
+    for i in input_list:
+        if "信号" in i:
+            frame.row.append(i)
+            draw_basic_function(frame,text=i)
+
 #画基本的一行
 def draw_basic_function(frame,text="输出信号"):
     f1=frame
-    row=f1.row[-1]
+    row=len(f1.row)
     path=StringVar()
     path.set(text)
     E1 = Entry(f1, text=path, width=8)
@@ -120,17 +116,23 @@ def draw_basic_function(frame,text="输出信号"):
 
 #汇总所有输入信号
 def get_all_info(frame):
-    row=frame.row[-1]
+    row=len(frame.row)
     print_info=[]
+    print_dict=dict()
+    print_str=[]
     for i in range(row+1):
         print_info.append(frame.element[i])
-    for i in print_info:
-        for j in i:
-            print(j.get())
+    print_info=print_info[1:]
+    for i in range(len(print_info)):
+        for j in print_info[i]:
+            print_str.append(j.get())
+        print_dict[i]=print_str
+        print_str=[]
+    print(print_dict)
 
 #在f2框架内，加入f1输入框架和b输出总按钮
 f1=Frame(f2,height = 20,width = 400)
-f1.row=[0]
+f1.row=['输入信号']
 f1.column=[7]
 f1.element=dict()
 str1=["&&","||"]
