@@ -59,8 +59,8 @@ B3.grid(row=0,column=0)
 """
 #增加输入框
 def addBox(frame,button1,button2,button3):
-    row=frame.grid_size()[1]-1
-    column=frame.grid_size()[0]
+    row=button3.grid_info()["row"]
+    column=button3.grid_info()["column"]
     e1 = ttk.Combobox(frame,value=str1, width=3)
     e1.grid(row=row,column=column-3)
     e2 = Entry(frame, width=7)
@@ -179,20 +179,21 @@ def draw_row(frame,str1,i,v,f_zong=None,d=None):
         if j==0 :
             L1=Label(frame,text=row_list[j], width=8)
             L1.grid(row=row, column=j)
-            print(0)
+
         elif j==1:
             L2 = Label(frame, text=row_list[j], width=3)
             L2.grid(row=row, column=j)
-            print(1)
+
         elif j%2==0:
             E2 = Entry(frame,width=7)
             E2.grid(row=row, column=j)
             Entry.insert(E2,index=0,string=row_list[j])
-            print("a")
+
         elif j%2==1:
             E3 = ttk.Combobox(frame, text=row_list[j],value=str1, width=3)
             E3.grid(row=row, column=3, padx=3)
-            print("b")
+            ttk.Combobox.insert(E3, index=0, string=row_list[j])
+
 
     B1 = Button(frame, text="+", command=lambda: addBox(frame, B1, B2, B3))
     B1.grid(row=row, column=column, padx=3)
@@ -237,7 +238,7 @@ def jump_to_shuchu(output,value):
 
     f_zong.pack()
     b.pack()
-    if value!=[]:
+    if value!=[] and value!=[[]]:
         #当data有输入的时候
         for i in range(len(value)):
             draw_row(f1,str1,i,value[i],f_zong=f_zong,d=Button_dict)
