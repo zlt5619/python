@@ -19,6 +19,7 @@ output_signal=[]
 str1=["&&","||"]
 data=dict()
 Button_dict = dict()
+
 """
 根据所有的信息，绘制excel表格，输出到当前路径
 """
@@ -35,6 +36,12 @@ def create_excel(input_signal,output_signal,data):
         w_input.write(i,0,input_signal[i])
     for j in range(len(output_signal)):
         w_output.write(j,0,output_signal[j])
+    for k1,v1 in data.items():
+        w=ws.add_sheet(sheetname=k1)
+        for k2,v2 in v1.items():
+            i=k2-1
+            for j in range(len(v2)):
+                w.write(i,j,v2[j])
     ws.save("输出文件.xls")
 
 fontStyle1 = tkFont.Font(size=20)
@@ -46,20 +53,24 @@ B3.grid(row=0,column=0)
 """
 #增加输入框
 def addBox(frame,button1,button2,button3):
-    row=button1.grid_info()['row']
-    column=button1.grid_info()['column']
+    row=frame.grid_size()[1]-1
+    column=frame.grid_size()[0]
     e1 = ttk.Combobox(frame,value=str1, width=3)
-    e1.grid(row=row,column=column)
+    e1.grid(row=row,column=column-3)
     e2 = Entry(frame, width=7)
-    e2.grid(row=row,column=column+1)
-    button1.grid(row=row,column=column+2)
-    button2.grid(row=row, column=column+3)
-    button3.grid(row=row, column=column+4)
+    e2.grid(row=row,column=column-2)
+    button1.grid(row=row,column=column-1)
+    button2.grid(row=row, column=column)
+    button3.grid(row=row, column=column+1)
+
 
 #减少输入框
 def subBox(frame,button1,button2,button3):
-    row = button1.grid_info()['row']
-    column = button1.grid_info()['column']
+    row = frame.grid_size()[1]-1
+    column =frame.grid_size()[0]
+    print(row)
+    print(column)
+    print(frame.grid_slaves())
     if len(frame.grid_slaves())==8:
         pass
     else:
@@ -67,9 +78,10 @@ def subBox(frame,button1,button2,button3):
         obj1.destroy()
         obj2=frame.grid_slaves().pop(0)
         obj2.destroy()
-        button1.grid(row=row, column=column -2)
-        button2.grid(row=row, column=column -1)
-        button3.grid(row=row, column=column)
+
+    print("-")
+    print(frame.grid_slaves())
+    print(frame.grid_size())
 #再画一行
 def draw_another_row(f_zong,j):
     row = f_zong.grid_size()[1]
@@ -77,7 +89,7 @@ def draw_another_row(f_zong,j):
     f.grid(row=row, sticky=W)
 
     draw_basic_row(f,str1,text=j,f_zong=f_zong)
-
+#每一行结束时，分析判断
 def collect_info_and_draw_another_row(frame,f_zong,buttom3,bd=None):
     info_obj_1=[]
     info_obj_2=[]
@@ -88,6 +100,7 @@ def collect_info_and_draw_another_row(frame,f_zong,buttom3,bd=None):
     panduan=0
     L=None
     Button_dict=bd
+
     if len(frame.grid_slaves())==8:
         info_obj_1=frame.grid_slaves()[-5:]
     else:
@@ -134,7 +147,7 @@ def collect_info_and_draw_another_row(frame,f_zong,buttom3,bd=None):
         for k in add_list:
             draw_another_row(f_zong, k)
 
-
+#画基本的一行
 def draw_basic_row(frame,str1,text=None,f_zong=None,d=None):
     frame=frame
     row=frame.grid_size()[0]
@@ -155,15 +168,24 @@ def draw_basic_row(frame,str1,text=None,f_zong=None,d=None):
     B2.grid(row=row, column=6, padx=3)
     B3 = Button(frame, text="完成", command=lambda: collect_info_and_draw_another_row(frame,f_zong,B3,bd=Button_dict))
     B3.grid(row=row, column=7, padx=3)
-
+#汇总整个信号的所有输入
 def get_all_info(output,bd=None):
+    #在传输数据时，需要将数据取出到函数中，再处理，否则受原对象影响
     Button_dict=bd
-    data[output]=Button_dict
-    Button_dict=dict()
+    k_list=[]
+    v_list=[]
+    add_dict={}
+    for k,v in Button_dict.items():
+        k_list.append(k)
+        v_list.append(v)
+    for i in range(len(k_list)):
+        add_dict[k_list[i]]=v_list[i]
+    data[output]= add_dict
+    Button_dict.clear()
 
+#跳转到信号逻辑输入界面
+def jump_to_shuchu(output,data):
 
-def jump_to_shuchu(b,data):
-    output=b.cget("text")
     root1=Tk(className=output+"的逻辑表达式输入")
     root1.geometry("600x600")
     str1 = ["&&", "||"]
@@ -187,26 +209,24 @@ def jump_to_shuchu(b,data):
 
     root1.mainloop()
 
-
 """
 根据输入的信号，绘制输入信号按钮，每一行布置6个信号
 """
 def draw_button_frame(output_signal,data):
-
-    for i in range(len(output_signal)):
-        row=int(i/6)
-        column=i%6
+    output_signal=output_signal
+    buttons=[]
+    for index in range(len(output_signal)):
+        row=int(index/6)
+        column=index%6
+        name=output_signal[index]
         if data:
-
-            b=Button(button_frame,text=output_signal[i],command=lambda : jump_to_shuchu(b,data[output_signal[i]]))
-            b.grid(row=row,column=column,padx=10)
+            pass
         else:
-            data = 0
-            b = Button(button_frame, text=output_signal[i],
-                       command=lambda: jump_to_shuchu(data))
-            b.grid(row=row, column=column, padx=10)
-
-
+            data=0
+            button = Button(button_frame, text=name,
+                            command=lambda name=name: jump_to_shuchu(name,data))
+            button.grid(padx=2, pady=2, row=row, column=column)
+            buttons.append(button)
 
 
 """
@@ -256,6 +276,7 @@ def read_file(filelist,data1):
             data[i]=data_list
     print("字典为",end=None)
     print(data)
+
     draw_button_frame(output_signal,data)
 
 
