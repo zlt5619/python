@@ -8,6 +8,7 @@ top = tkinter.Tk()
 
 def print_positon(Button):
     Button.place(x=200,y=100)
+    print(Button.cget("text"))
 
 
 B = tkinter.Button(top, text="点我", command=lambda :print_positon(B))
