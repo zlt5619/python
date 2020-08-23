@@ -185,8 +185,9 @@ def draw_row(frame,str1,i,v,f_zong=None,d=None):
             L2.grid(row=row, column=j)
             print(1)
         elif j%2==0:
-            E2 = Entry(frame,text=row_list[j],width=7)
+            E2 = Entry(frame,width=7)
             E2.grid(row=row, column=j)
+            Entry.insert(E2,index=0,string=row_list[j])
             print("a")
         elif j%2==1:
             E3 = ttk.Combobox(frame, text=row_list[j],value=str1, width=3)
