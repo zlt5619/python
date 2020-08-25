@@ -2,16 +2,58 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import tkinter.font as tkFont
 import xlrd
-
-
-class input_file_frame(Frame):
-    def __init__(self,filelist=None,data=None,input_signal=None,output_signal=None):
-        Frame.__init__(self,filelist=None,data=None,input_signal=None,output_signal=None)
-        self.path1=StringVar()
-        self.filelist=filelist
+#创建逻辑表达式输入
+class input_signal_Frame(Frame):
+    def __init__(self,key=None,value=None):
+        Frame.__init__(self)
+        self.key=key
+        self.value=1
+        self.className=key
+        b1 = Button(self, text="汇总生成Excel文件", command=lambda: self.get_info())
+        b1.pack()
+    def get_info(self):
+        pass
+#创建收集所有汇总信息的Frame
+class get_all_info_Frame(Frame):
+    def __init__(self,Button_Frame=None):
+        Frame.__init__(self)
+        b1=Button(self,text="汇总生成Excel文件",command=lambda :self.get_info())
+        b1.grid(row=0,column=0)
+    def get_info(self):
+        pass
+#创建Button生成Frame
+class Button_Frame(Frame):
+    def __init__(self,data=None):
+        Frame.__init__(self)
         self.data=data
-        self.input_signal=input_signal
-        self.output_signal=output_signal
+        self.Buttons=[]
+        self.keys=list(data.keys())
+        self.values=list(data.values())
+        for index in range(len(self.keys)):
+            row = int(index / 6)
+            column = index % 6
+            key = self.keys[index]
+            value = self.values[index]
+            button = Button(self, text=key,
+                            command=lambda key=key, value=value: self.jump_to_signal_input_frame(key, value))
+            button.grid(padx=2, pady=2, row=row, column=column)
+            self.Buttons.append(button)
+    def jump_to_signal_input_frame(self,key,value):
+        str1=key+"的逻辑输出表达式"
+        root1 = Tk(className=str1)
+        root1.geometry("600x600")
+        isr=input_signal_Frame(root1,key=key,value=value)
+        isr.pack()
+        self.data[key]=isr.value
+#创建文件输入Frame
+class input_file_frame(Frame):
+    def __init__(self):
+        Frame.__init__(self)
+        self.path1=StringVar()
+        self.filelist=[]
+        self.data=dict()
+        self.input_signal=[]
+        self.output_signal=[]
         L1 = Label(self, text="输入文件:")
         L1.grid(row=0, column=0)
         E1 = Entry(self, textvariable=self.path1, width=30)
@@ -30,47 +72,60 @@ class input_file_frame(Frame):
     def read_file(self,filelist, data1):
         data = data1
         fontStyle = tkFont.Font(size=20)
-        L = Label(self, text="信号输入完成", font=fontStyle)
-        L.grid(row=1, column=0)
-        workxls = xlrd.open_workbook(filelist[0])
-        worksheet_input = workxls.sheet_by_name("输入信号")
-        row = worksheet_input.nrows
-        for i in range(row):
-            rowdata = worksheet_input.row_values(i)[0]  # i行的list
-            self.input_signal.append(rowdata)
+        if len(self.grid_slaves())==5:
+            self.grid_slaves(1,0)[0].destroy()
+        if filelist[0].endswith("xls") or filelist[0].endswith("xlsx"):
+            L = Label(self, text="信号输入完成", font=fontStyle)
+            L.grid(row=1, column=0)
+            workxls = xlrd.open_workbook(filelist[0])
+            worksheet_input = workxls.sheet_by_name("输入信号")
+            row = worksheet_input.nrows
+            for i in range(row):
+                rowdata = worksheet_input.row_values(i)[0]  # i行的list
+                self.input_signal.append(rowdata)
 
-        worksheet_output = workxls.sheet_by_name("输出信号")
-        row = worksheet_output.nrows
-        for i in range(row):
-            rowdata = worksheet_output.row_values(i)[0]  # i行的list
-            self.output_signal.append(rowdata)
+            worksheet_output = workxls.sheet_by_name("输出信号")
+            row = worksheet_output.nrows
+            for i in range(row):
+                rowdata = worksheet_output.row_values(i)[0]  # i行的list
+                self.output_signal.append(rowdata)
 
-        # 读取输入文件写好的信号相关内容，并将内容赋给字典data
-        excel_list = workxls.sheet_names()[2:]
-        if len(excel_list) == 0:
-            pass
+            # 读取输入文件写好的信号相关内容，并将内容赋给字典data
+            excel_list = workxls.sheet_names()[2:]
+            if len(excel_list) == 0:
+                pass
+            else:
+                for i in excel_list:
+                    worksheet = workxls.sheet_by_name(i)
+                    row = worksheet.nrows
+                    data_list = []
+                    for j in range(row):
+                        rowdata = worksheet.row_values(j)
+                        data_list.append(rowdata)
+                    self.data[i] = data_list
+            for shuchu in self.output_signal:
+                if shuchu not in data.keys():
+                    self.data[shuchu] = [[]]
+
+            print("字典为", end="")
+            print(data)
+
+            b=Button_Frame(data)
+            gaiF = get_all_info_Frame(Button_Frame=b)
+            b.pack()
+            gaiF.pack()
+
         else:
-            for i in excel_list:
-                worksheet = workxls.sheet_by_name(i)
-                row = worksheet.nrows
-                data_list = []
-                for j in range(row):
-                    rowdata = worksheet.row_values(j)
-                    data_list.append(rowdata)
-                self.data[i] = data_list
-        for shuchu in self.output_signal:
-            if shuchu not in data.keys():
-                self.data[shuchu] = [[]]
-
-        print("字典为", end=None)
-        print(data)
+            L = Label(self, text="输入有误，请再次输入", font=fontStyle)
+            L.grid(row=1, column=0)
+            # print(filelist)
+            self.filelist=[]
 
 root=Tk(className="仪表逻辑图")
 root.geometry("900x400")
-filelist=[]
-input_signal=[]
-output_signal=[]
-data=dict()
-if_frame=input_file_frame(data=data,input_signal=input_signal,output_signal=output_signal,filelist=filelist)
+
+if_frame=input_file_frame(root)
 if_frame.pack()
+
+
 root.mainloop()
