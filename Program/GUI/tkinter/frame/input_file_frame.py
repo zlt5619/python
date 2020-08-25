@@ -2,29 +2,51 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import tkinter.font as tkFont
 import xlrd
+
+#按钮Frame
+class b_Frame(Frame):
+    def __init__(self,frame):
+        super().__init__(frame)
+#输入信号Frame
+class input_Frame(Frame):
+    def __init__(self,frame,key=None,value=None):
+        super().__init__(frame)
+#创建1行的输入Frame，由输入信号Frame和按钮Frame组成
+class basic_row_Frame(Frame):
+    def __init__(self,frame,key=None,value=None):
+        super().__init__(frame)
+        i1=input_Frame(self,key=key,value=value)
+        b1=b_Frame(self)
+#创建整体的输入Frame
+class row_Frame(Frame):
+    def __init__(self, frame, key=None, value=None):
+        super().__init__(frame)
 #创建逻辑表达式输入
 class input_signal_Frame(Frame):
-    def __init__(self,key=None,value=None):
-        Frame.__init__(self)
+    def __init__(self,root=None,key=None,value=None):
+        super().__init__(root)
+        str1 = key + "的逻辑输出表达式"
         self.key=key
-        self.value=1
-        self.className=key
-        b1 = Button(self, text="汇总生成Excel文件", command=lambda: self.get_info())
-        b1.pack()
-    def get_info(self):
-        pass
+        self.value=value
+        r1=row_Frame(self,key,value)
+        r1.grid(row=0,column=0)
+        b=Button(self,text="汇总信号",command=lambda :self.get_this_frame_data())
+        b.grid(row=1,column=0)
+    def get_this_frame_data(self):
+        data[self.key]=10
 #创建收集所有汇总信息的Frame
 class get_all_info_Frame(Frame):
-    def __init__(self,Button_Frame=None):
-        Frame.__init__(self)
+    def __init__(self,root=None,Button_Frame=None):
+        super().__init__(root)
+        self.root=root
         b1=Button(self,text="汇总生成Excel文件",command=lambda :self.get_info())
         b1.grid(row=0,column=0)
     def get_info(self):
-        pass
+        print(data)
 #创建Button生成Frame
 class Button_Frame(Frame):
-    def __init__(self,data=None):
-        Frame.__init__(self)
+    def __init__(self,root=None,data=None):
+        super().__init__(root)
         self.data=data
         self.Buttons=[]
         self.keys=list(data.keys())
@@ -44,11 +66,14 @@ class Button_Frame(Frame):
         root1.geometry("600x600")
         isr=input_signal_Frame(root1,key=key,value=value)
         isr.pack()
+        root1.mainloop()
         self.data[key]=isr.value
+        print(self.data[key])
 #创建文件输入Frame
 class input_file_frame(Frame):
-    def __init__(self):
-        Frame.__init__(self)
+    def __init__(self,root=None):
+        #继承了Frame（root）的安排
+        super().__init__(root)
         self.path1=StringVar()
         self.filelist=[]
         self.data=dict()
@@ -110,7 +135,7 @@ class input_file_frame(Frame):
             print("字典为", end="")
             print(data)
 
-            b=Button_Frame(data)
+            b=Button_Frame(root,data)
             gaiF = get_all_info_Frame(Button_Frame=b)
             b.pack()
             gaiF.pack()
@@ -123,7 +148,7 @@ class input_file_frame(Frame):
 
 root=Tk(className="仪表逻辑图")
 root.geometry("900x400")
-
+data=dict()
 if_frame=input_file_frame(root)
 if_frame.pack()
 
