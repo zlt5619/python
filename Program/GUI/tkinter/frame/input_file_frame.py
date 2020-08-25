@@ -67,8 +67,7 @@ class Button_Frame(Frame):
         isr=input_signal_Frame(root1,key=key,value=value)
         isr.pack()
         root1.mainloop()
-        self.data[key]=isr.value
-        print(self.data[key])
+
 #创建文件输入Frame
 class input_file_frame(Frame):
     def __init__(self,root=None):
