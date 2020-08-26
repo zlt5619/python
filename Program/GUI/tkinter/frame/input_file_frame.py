@@ -1,30 +1,66 @@
 from tkinter import *
+from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 import tkinter.font as tkFont
 import xlrd
 import xlwt
 #按钮Frame
 class b_Frame(Frame):
-    def __init__(self,frame):
+    def __init__(self,frame,input_Frame=None):
         super().__init__(frame)
+        B1 = Button(self, text="+", command=lambda: self.addBox())
+        B1.grid(row=0, column=0, padx=3)
+        B2 = Button(self, text="-", command=lambda: self.subBox())
+        B2.grid(row=0, column=1, padx=3)
+        B3 = Button(self, text="完成",
+                    command=lambda: self.collect_info_and_draw_another_row())
+        B3.grid(row=0, column=2, padx=3)
+    def addBox(self):
+        pass
+    def subBox(self):
+        pass
+    def collect_info_and_draw_another_row(self):
+        pass
+
 #输入信号Frame
 class input_Frame(Frame):
-    def __init__(self,frame,key=None,value=None):
+    def __init__(self,frame,key=None):
         super().__init__(frame)
+        l1=Label(self,text=key,width=8)
+        l1.grid(row=0,column=0)
+        l2=Label(self,text="=",width=3)
+        l2.grid(row=0,column=1)
+        E1 = Entry(self, width=7)
+        E1.grid(row=0, column=2)
+        E2 = ttk.Combobox(self, value=str1, width=3)
+        E2.grid(row=0, column=3, padx=3)
+        E3 = Entry(self, width=7)
+        E3.grid(row=0, column=4, padx=3)
+
 #创建1行的输入Frame，由输入信号Frame和按钮Frame组成
 class basic_row_Frame(Frame):
+    def __init__(self,frame,key=None):
+        super().__init__(frame)
+        i1=input_Frame(self,key=key)
+        b1=b_Frame(self,input_Frame=input_Frame)
+        i1.grid(row=0,column=0)
+        b1.grid(row=0,column=1)
+#创建多行输入
+class rows_Frame(Frame):
     def __init__(self,frame,key=None,value=None):
         super().__init__(frame)
-        i1=input_Frame(self,key=key,value=value)
-        b1=b_Frame(self)
 #创建整体的输入Frame
 class row_Frame(Frame):
     def __init__(self, frame, key=None, value=None):
         super().__init__(frame)
+        self.key=key
+        self.value=value
         if value==[[]]:
-            f1=basic_row_Frame(self, key=None)
+            f1=basic_row_Frame(self, key= self.key)
+            f1.pack()
         else:
-            f1=basic_row_Frame(self,key=key,value=value)
+            f1=rows_Frame(self,key=self.key,value=self.value)
+            f1.pack()
 #创建逻辑表达式输入
 class input_signal_Frame(Frame):
     def __init__(self,root=None,key=None,value=None):
@@ -32,7 +68,7 @@ class input_signal_Frame(Frame):
         str1 = key + "的逻辑输出表达式"
         self.key=key
         self.value=value
-        r1=row_Frame(self,key,value)
+        r1=row_Frame(self,self.key,self.value)
         r1.grid(row=0,column=0)
         b=Button(self,text="汇总信号",command=lambda :self.get_this_frame_data())
         b.grid(row=1,column=0)
@@ -78,7 +114,6 @@ class Button_Frame(Frame):
         isr=input_signal_Frame(root1,key=key,value=value)
         isr.pack()
         root1.mainloop()
-
 #创建文件输入Frame
 class input_file_frame(Frame):
     def __init__(self,root=None):
@@ -144,7 +179,7 @@ class input_file_frame(Frame):
 
             print("字典为", end="")
             print(data)
-
+            output_data=data
             b=Button_Frame(root,data)
             gaiF = get_all_info_Frame(root)
             b.pack()
@@ -159,6 +194,7 @@ class input_file_frame(Frame):
 root=Tk(className="仪表逻辑图")
 root.geometry("900x400")
 output_data=dict()
+str1=["&&","||"]
 if_frame=input_file_frame(root)
 if_frame.pack()
 
