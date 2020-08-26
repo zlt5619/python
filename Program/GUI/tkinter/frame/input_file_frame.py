@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import tkinter.font as tkFont
 import xlrd
-
+import xlwt
 #按钮Frame
 class b_Frame(Frame):
     def __init__(self,frame):
@@ -21,6 +21,10 @@ class basic_row_Frame(Frame):
 class row_Frame(Frame):
     def __init__(self, frame, key=None, value=None):
         super().__init__(frame)
+        if value==[[]]:
+            f1=basic_row_Frame(self, key=None)
+        else:
+            f1=basic_row_Frame(self,key=key,value=value)
 #创建逻辑表达式输入
 class input_signal_Frame(Frame):
     def __init__(self,root=None,key=None,value=None):
@@ -33,16 +37,23 @@ class input_signal_Frame(Frame):
         b=Button(self,text="汇总信号",command=lambda :self.get_this_frame_data())
         b.grid(row=1,column=0)
     def get_this_frame_data(self):
-        data[self.key]=10
+        output_data[self.key]=10
 #创建收集所有汇总信息的Frame
 class get_all_info_Frame(Frame):
-    def __init__(self,root=None,Button_Frame=None):
+    def __init__(self,root=None):
         super().__init__(root)
         self.root=root
-        b1=Button(self,text="汇总生成Excel文件",command=lambda :self.get_info())
+        b1=Button(self,text="汇总生成Excel文件",command=lambda :self.get_info_and_to_excel())
         b1.grid(row=0,column=0)
+    def get_info_and_to_excel(self):
+        to_excel_data=self.get_info()
+        self.to_excel(to_excel_data=to_excel_data)
     def get_info(self):
-        print(data)
+        print(output_data)
+        to_excel_data=None
+        return to_excel_data
+    def to_excel(self,to_excel_data=None):
+        pass
 #创建Button生成Frame
 class Button_Frame(Frame):
     def __init__(self,root=None,data=None):
@@ -135,7 +146,7 @@ class input_file_frame(Frame):
             print(data)
 
             b=Button_Frame(root,data)
-            gaiF = get_all_info_Frame(Button_Frame=b)
+            gaiF = get_all_info_Frame(root)
             b.pack()
             gaiF.pack()
 
@@ -147,7 +158,7 @@ class input_file_frame(Frame):
 
 root=Tk(className="仪表逻辑图")
 root.geometry("900x400")
-data=dict()
+output_data=dict()
 if_frame=input_file_frame(root)
 if_frame.pack()
 
