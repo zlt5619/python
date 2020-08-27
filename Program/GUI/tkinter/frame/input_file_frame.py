@@ -6,8 +6,11 @@ import xlrd
 import xlwt
 #按钮Frame
 class b_Frame(Frame):
-    def __init__(self,frame,input_Frame=None):
+    def __init__(self,frame,input_Frame=None,row_Frame=None):
         super().__init__(frame)
+        self.iF=input_Frame
+        self.info_list=[]
+        self.row_Frame=row_Frame
         B1 = Button(self, text="+", command=lambda: self.addBox())
         B1.grid(row=0, column=0, padx=3)
         B2 = Button(self, text="-", command=lambda: self.subBox())
@@ -16,11 +19,41 @@ class b_Frame(Frame):
                     command=lambda: self.collect_info_and_draw_another_row())
         B3.grid(row=0, column=2, padx=3)
     def addBox(self):
-        pass
+        column=self.iF.grid_size()[0]
+        E1 = ttk.Combobox(self.iF, value=str1, width=3)
+        E1.grid(row=0, column=column, padx=3)
+        E2 = Entry(self.iF, width=7)
+        E2.grid(row=0, column=column+1, padx=3)
+
     def subBox(self):
-        pass
+        column=self.iF.grid_size()[0]
+        if column==3:
+            pass
+        else:
+            obj1=self.iF.grid_slaves().pop(0)
+            obj1.destroy()
+            obj2 = self.iF.grid_slaves().pop(0)
+            obj2.destroy()
+
     def collect_info_and_draw_another_row(self):
-        pass
+
+        input_obj=self.iF.grid_slaves()
+        input_obj.reverse()
+        #收集数据到self.info_list，
+        for i in range(len(input_obj)):
+            if i==0 or i==1:
+                self.info_list.append(input_obj[i].cget("text"))
+            else:
+                self.info_list.append(input_obj[i].get())
+        #再判断是否需要生成新的row
+        for i in self.info_list:
+            if "信号" in i:
+                self.draw_another_row(i)
+
+
+    def draw_another_row(self,value=None):
+        f2 = basic_row_Frame(self.row_Frame, key=value)
+        f2.pack()
 
 #输入信号Frame
 class input_Frame(Frame):
@@ -31,7 +64,7 @@ class input_Frame(Frame):
         l2=Label(self,text="=",width=3)
         l2.grid(row=0,column=1)
         E1 = Entry(self, width=7)
-        E1.grid(row=0, column=2)
+        E1.grid(row=0, column=2,padx=3)
         E2 = ttk.Combobox(self, value=str1, width=3)
         E2.grid(row=0, column=3, padx=3)
         E3 = Entry(self, width=7)
@@ -41,8 +74,9 @@ class input_Frame(Frame):
 class basic_row_Frame(Frame):
     def __init__(self,frame,key=None):
         super().__init__(frame)
+        self.row_Frame=frame
         i1=input_Frame(self,key=key)
-        b1=b_Frame(self,input_Frame=input_Frame)
+        b1=b_Frame(self,input_Frame=i1,row_Frame=self.row_Frame)
         i1.grid(row=0,column=0)
         b1.grid(row=0,column=1)
 #创建多行输入
