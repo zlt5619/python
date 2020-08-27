@@ -9,5 +9,5 @@ path.set(text)
 E1 = Entry(root, textvariable=path, width=8)
 E1.grid(row=0, column=0)
 print(dir(Entry))
-Entry.insert(E1,index=1,string="ghj")
+
 root.mainloop()
