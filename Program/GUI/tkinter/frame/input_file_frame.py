@@ -81,43 +81,63 @@ class b_Frame(Frame):
         return 0
 #输入信号Frame
 class input_Frame(Frame):
-    def __init__(self,frame,key=None):
+    def __init__(self,frame,key=None,value=None):
         super().__init__(frame)
-        l1=Label(self,text=key)
-        l1.grid(row=0,column=0)
-        l2=Label(self,text="=",width=3)
-        l2.grid(row=0,column=1)
-        E1 = Entry(self, width=7)
-        E1.grid(row=0, column=2,padx=3)
-        E2 = ttk.Combobox(self, value=str1, width=3)
-        E2.grid(row=0, column=3, padx=3)
-        E3 = Entry(self, width=7)
-        E3.grid(row=0, column=4, padx=3)
+        self.value=value
+        if self.value==None:
+            l1=Label(self,text=key)
+            l1.grid(row=0,column=0)
+            l2=Label(self,text="=",width=3)
+            l2.grid(row=0,column=1)
+            E1 = Entry(self, width=7)
+            E1.grid(row=0, column=2,padx=3)
+            E2 = ttk.Combobox(self, value=str1, width=3)
+            E2.grid(row=0, column=3, padx=3)
+            E3 = Entry(self, width=7)
+            E3.grid(row=0, column=4, padx=3)
+        else:
+            l1 = Label(self, text=self.value[0])
+            l1.grid(row=0, column=0)
+            l2 = Label(self, text=self.value[1], width=3)
+            l2.grid(row=0, column=1)
+            output_data=self.value[2:]
+            print(self.value)
+            for i in range(len(output_data)):
+                column=i+2
+                if i%2==0:
+                    E1 = Entry(self, width=7)
+                    E1.grid(row=0, column=column, padx=3)
+                else:
+                    E2 = ttk.Combobox(self, value=str1,width=3)
+                    E2.grid(row=0, column=column, padx=3)
+
 #创建1行的输入Frame，由输入信号Frame和按钮Frame组成
 class basic_row_Frame(Frame):
-    def __init__(self,frame,key=None):
+    def __init__(self,frame,key=None,value=None):
         super().__init__(frame)
         self.row_Frame=frame
-        i1=input_Frame(self,key=key)
+        self.value=value
+        i1=input_Frame(self,key=key,value=self.value)
         b1=b_Frame(self,input_Frame=i1,row_Frame=self.row_Frame,input_file_frame=if_frame)
         i1.grid(row=0,column=0)
         b1.grid(row=0,column=1)
-#创建多行输入
-class rows_Frame(Frame):
-    def __init__(self,frame,key=None,value=None):
-        super().__init__(frame)
+
 #创建整体的输入Frame
 class row_Frame(Frame):
     def __init__(self,frame, key=None, value=None):
         super().__init__(frame)
         self.key=key
         self.value=value
-        if value==[[]]:
+        #若value没有值，则输出基本输入行
+        if value== {}:
             f1=basic_row_Frame(self, key= self.key)
             f1.grid()
+        #若value有值，则先画若干行基本输入行，再改
         else:
-            f1=rows_Frame(self,key=self.key,value=self.value)
-            f1.grid()
+            for i in range(len(value)):
+                output=value[i]
+                f1=basic_row_Frame(self,key=self.key,value=output)
+                f1.grid()
 #创建逻辑表达式输入
 class input_signal_Frame(Frame):
     def __init__(self,root=None,key=None,value=None):
@@ -131,10 +151,13 @@ class input_signal_Frame(Frame):
         b.grid(row=1,column=0)
     def get_this_frame_data(self,r1):
         self.output_data=dict()
-        for i in range(len(r1.grid_slaves())):
-            obj1=r1.grid_slaves()[i].grid_slaves()[0]
+        output_list=r1.grid_slaves()
+        output_list.reverse()
+        for i in range(len(output_list)):
+            obj1=output_list[i].grid_slaves()[0]
             self.output_data[i]=obj1.info_list
-
+        #打印输出
+        print(self.output_data)
         if_frame.output_data[self.key]=self.output_data
         l1 = Label(self, text="√")
         l1.grid(row=1, column=1)
@@ -183,7 +206,10 @@ class Button_Frame(Frame):
             column = index % 6
             key = self.keys[index]
             value = self.values[index]
-            button = Button(self, text=key,
+            color=None
+            if len(value)!=0:
+                color="red"
+            button = Button(self, text=key,bg=color,
                             command=lambda key=key, value=value: self.jump_to_signal_input_frame(key, value))
             button.grid(padx=2, pady=2, row=row, column=column)
             self.Buttons.append(button)
@@ -247,14 +273,15 @@ class input_file_frame(Frame):
                 for i in excel_list:
                     worksheet = workxls.sheet_by_name(i)
                     row = worksheet.nrows
-                    data_list = []
+                    data_list = {}
                     for j in range(row):
                         rowdata = worksheet.row_values(j)
-                        data_list.append(rowdata)
+                        data_list[j]=rowdata
                     self.data[i] = data_list
+            #增加没有逻辑表达式的数据
             for shuchu in self.output_signal:
                 if shuchu not in data.keys():
-                    self.data[shuchu] = [[]]
+                    self.data[shuchu] = {}
 
             print("字典为", end="")
             print(data)
