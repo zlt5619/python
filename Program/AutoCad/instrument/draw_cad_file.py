@@ -5,7 +5,7 @@ d={'PO010': {0: ['PO010', '=', 'MT001', '&&', 'MT005', '&&', '信号1'], 1: ['�
 
 def draw_cad(data):
     #打印相关数据
-    print(data)
+    # print(data)
     output_signal=data.keys()
     output_data_set=set()
     draw_signal_data=dict()
@@ -25,9 +25,9 @@ def draw_cad(data):
                     output_data_set.add(values[j][k])
         draw_signal_data[i]=output_data_set
         output_data_set=set()
-    print(draw_signal_data)
+    # print(draw_signal_data)
     draw_relevent_signal(data=draw_signal_data)
-    draw_relvent_logic(data=draw_signal_data)
+    draw_relvent_logic(raw_data=data,data=draw_signal_data)
 #画出相关信号
 def draw_relevent_signal(data=None):
     draw_list=[]
@@ -58,8 +58,23 @@ def draw_relevent_signal(data=None):
                 else:
                     signal(draw_list[i][k],insert_point=(k*500+(len(draw_list[i-1])-1)*500,1400))
 #画出相关逻辑
-def draw_relvent_logic(data=None):
-    pass
+def draw_relvent_logic(raw_data=None,data=None):
+    # print(raw_data)
+    # print(data)
+    draw_list = []
+    for k, v in data.items():
+        list1 = list(v)
+        list1.sort()
+        xinhao_list = []
+        list2=[]
+        for i in range(len(list1)):
+            if "信号" in list1[i]:
+                xinhao_list.append(list1[i])
+            else:
+                list2.append(list1[i])
+        list2.append(k)
+        draw_list.append([xinhao_list,list2])
+    print(draw_list)
 
 
 draw_cad(d)
