@@ -6,7 +6,7 @@ import xlrd
 from xlwt import *
 #按钮Frame
 from xlwt import Workbook
-
+from Program.AutoCad.instrument.draw_cad_file import draw_cad
 
 class b_Frame(Frame):
     def __init__(self,frame,input_Frame=None,row_Frame=None,input_file_frame=None):
@@ -45,17 +45,20 @@ class b_Frame(Frame):
         input_obj.reverse()
         input_signal=self.input_file_frame.input_signal
         output_signal=self.input_file_frame.output_signal
+        xinhao_list=self.row_Frame.zong_outpu_data
         #收集数据到self.info_list，
         for i in range(len(input_obj)):
             if i==0 or i==1:
                 self.info_list.append(input_obj[i].cget("text"))
             else:
                 self.info_list.append(input_obj[i].get())
+        # 打印输出行
+        print(self.info_list)
         #info_list包含了前面两个label的值，需要去掉
         panduan_list=self.info_list[2:][::2]
         #判断收集到的数据，是否符合标准，是否在input和output信号
-        #
-        draw_label=self.panduan(panduan_list,input_signal,output_signal)
+
+        draw_label=self.panduan(panduan_list,input_signal,output_signal,xinhao_list)
         if draw_label:
             l1=Label(self,text="输入信号有误",width=10)
             l1.grid(row=0, column=3, padx=3)
@@ -63,19 +66,21 @@ class b_Frame(Frame):
         else:
             l1 = Label(self, text="√", width=10)
             l1.grid(row=0, column=3, padx=3)
-        print(self.info_list)
+
     def draw_another_row(self,value=None):
         f2 = basic_row_Frame(self.row_Frame, key=value)
         f2.grid()
-    def panduan(self,panduan_list,input_signal,output_signal):
+    def panduan(self,panduan_list,input_signal,output_signal,xinhaolist):
+        xinhaolist=list(xinhaolist)
         #将值传回，决定后面的label值是哪个
         for i in panduan_list:
             if i in input_signal:
                 pass
             elif i in output_signal:
                 pass
-            elif "信号" in i:
-                self.draw_another_row(value=i)
+            elif "信号" in i :
+                if i not in xinhaolist:
+                    self.draw_another_row(value=i)
             else:
                 return 1
         return 0
@@ -101,16 +106,18 @@ class input_Frame(Frame):
             l2 = Label(self, text=self.value[1], width=3)
             l2.grid(row=0, column=1)
             output_data=self.value[2:]
-            print(self.value)
+            #打印输入的每行
+            # print(self.value)
             for i in range(len(output_data)):
                 column=i+2
                 if i%2==0:
                     E1 = Entry(self, width=7)
+                    E1.insert(0,output_data[i])
                     E1.grid(row=0, column=column, padx=3)
                 else:
                     E2 = ttk.Combobox(self, value=str1,width=3)
+                    E2.insert(0,output_data[i])
                     E2.grid(row=0, column=column, padx=3)
-
 #创建1行的输入Frame，由输入信号Frame和按钮Frame组成
 class basic_row_Frame(Frame):
     def __init__(self,frame,key=None,value=None):
@@ -121,13 +128,17 @@ class basic_row_Frame(Frame):
         b1=b_Frame(self,input_Frame=i1,row_Frame=self.row_Frame,input_file_frame=if_frame)
         i1.grid(row=0,column=0)
         b1.grid(row=0,column=1)
-
 #创建整体的输入Frame
 class row_Frame(Frame):
     def __init__(self,frame, key=None, value=None):
         super().__init__(frame)
         self.key=key
         self.value=value
+        self.zong_outpu_data=set()
+        for v in self.value.values():
+            for i in v:
+                 if "信号" in i:
+                    self.zong_outpu_data.add(i)
         #若value没有值，则输出基本输入行
         if value== {}:
             f1=basic_row_Frame(self, key= self.key)
@@ -161,6 +172,26 @@ class input_signal_Frame(Frame):
         if_frame.output_data[self.key]=self.output_data
         l1 = Label(self, text="√")
         l1.grid(row=1, column=1)
+#创建生成cad_Frame
+class to_cad_Frame(Frame):
+    def __init__(self,root=None):
+        super().__init__(root)
+        b1 = Button(self, text="汇总生成CAD文件", command=lambda: self.get_info_and_to_cad())
+        b1.grid(row=0, column=0)
+
+    def get_info_and_to_cad(self):
+        to_cad_data=if_frame.output_data
+        self.to_cad(to_cad_data)
+        L1 = Label(self, text="√", width=3)
+        L1.grid(row=0, column=1)
+
+    def to_cad(self,to_cad_data):
+        data=to_cad_data
+        #打印数据
+        print(data)
+        draw_cad(data)
+
+
 #创建收集所有汇总信息的Frame
 class get_all_info_Frame(Frame):
     def __init__(self,root=None):
@@ -191,8 +222,8 @@ class get_all_info_Frame(Frame):
                         w.write(i, j, v2[j])
 
         ws.save("输出文件.xls")
-        L1 = Label(root, text="√", width=3)
-        L1.pack()
+        L1 = Label(self, text="√", width=3)
+        L1.grid(row=0,column=1)
 #创建Button生成Frame
 class Button_Frame(Frame):
     def __init__(self,root=None,data=None):
@@ -276,6 +307,7 @@ class input_file_frame(Frame):
                     data_list = {}
                     for j in range(row):
                         rowdata = worksheet.row_values(j)
+                        rowdata = [x for x in rowdata if x != '']
                         data_list[j]=rowdata
                     self.data[i] = data_list
             #增加没有逻辑表达式的数据
@@ -287,8 +319,11 @@ class input_file_frame(Frame):
             print(data)
             b=Button_Frame(root,data)
             gaiF = get_all_info_Frame(root)
+            tcad=to_cad_Frame(root)
             b.pack()
             gaiF.pack()
+            tcad.pack()
+
 
         else:
             L = Label(self, text="输入有误，请再次输入", font=fontStyle)
