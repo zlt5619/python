@@ -189,7 +189,7 @@ class to_cad_Frame(Frame):
         data=to_cad_data
         #打印数据
         print(data)
-        draw_cad(data)
+        # draw_cad(data)
 
 
 #创建收集所有汇总信息的Frame
