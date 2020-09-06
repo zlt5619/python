@@ -77,4 +77,4 @@ def draw_relvent_logic(raw_data=None,data=None):
     print(draw_list)
 
 
-draw_cad(d)
+# draw_cad(d)
