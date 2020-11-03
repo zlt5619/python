@@ -7,7 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Program/AutoCad/instrument" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Program/actual_demo/logistic_drawing1" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.8" jdkType="Python SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
