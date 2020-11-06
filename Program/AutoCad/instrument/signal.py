@@ -1,6 +1,6 @@
 from pyautocad import Autocad,APoint
 
-# acad = Autocad(create_if_not_exists = True)
+# acad = aautocad(create_if_not_exists = True)
 # acad.prompt("Hello! AutoCAD from pyautocad.")
 
 class signal():

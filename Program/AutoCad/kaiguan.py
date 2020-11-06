@@ -2,7 +2,7 @@ from pyautocad import Autocad,APoint
 
 acad = Autocad(create_if_not_exists=True)
 # acad.prompt() 用来在cad控制台中打印文字
-acad.prompt("Hello, Autocad from Python")
+acad.prompt("Hello, aautocad from Python")
 # p1=APoint(0,0)
 # p2=APoint(100,0)
 # p3=APoint(140,30)

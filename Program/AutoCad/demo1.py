@@ -2,7 +2,7 @@ from pyautocad import Autocad, APoint
 
 
 acad = Autocad(create_if_not_exists=True)
-acad.prompt("Hello, Autocad from Python\n")
+acad.prompt("Hello, aautocad from Python\n")
 print(acad.doc.Name)
 
 p1 = APoint(0, 0)
