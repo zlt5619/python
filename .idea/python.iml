@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Program/actual_demo/logistic_drawing" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Program/AutoCad/instrument" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Program/actual_demo/logistic_drawing1" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Program/class_info" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CAD" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
