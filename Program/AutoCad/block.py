@@ -16,3 +16,4 @@ height =500
 textobj=blockObj.AddText(textString, insertPnt, height)
 insertionPnt = APoint(0, 0)
 RetVal = acad.model.InsertBlock(insertionPnt, "HIT_Block", 1, 1, 1, 0 )
+
