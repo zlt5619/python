@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilenames
 
 import xlrd
-from pyautocad import APoint
+from pyautocad import APoint, Autocad
 
 """
 拿到excel文件的路径，读取excel文件
@@ -103,18 +103,116 @@ class CADdrawer():
         self.filelist=filelist[0]
         #处理输入的文件路径
         filelists=self.process_filelist()
+        #处理excel
         excel_rd=excel_reader(filelists)
+        # 返回处理excel的结果
         result=excel_rd.result
-        self.blocklistinfo=dict()
+        #准备块的信息
+        self.blocklistinfo=[]
+        #准备块的布置信息
+        self.place_info=[]
+        #画块
         self.draw_cad_model(result)
-
+        print(self.blocklistinfo)
+        #布置块
+        self.place_kuai(self.blocklistinfo)
+        #画电缆
+        self.draw_cable()
+        #写电缆编号
+        self.draw_cable_name()
+    #处理文件路径
     def process_filelist(self):
         filelists=[]
         for i in self.filelist:
             filelists.append(i)
         return filelists
+    #画直线
+    def draw_line(self,blockObj, line_info):
+        if line_info == []:
+            pass
+        else:
+            for l_info in line_info:
+                point1 = l_info[0]
+                point2 = l_info[1]
+                blockObj.AddLine(point1, point2)
+    #画文字
+    def draw_wenzi(self,blockObj, wenzi_info):
+        if wenzi_info == []:
+            pass
+        else:
+            textObj = blockObj.AddText(wenzi_info[0], wenzi_info[1], wenzi_info[2])
+            AlignNum = wenzi_info[3]
+            textObj.Alignment = AlignNum
+            insertPnt = wenzi_info[1]
+            textObj.TextAlignmentPoint = insertPnt
+    #画cabinet块
+    def draw_cabinet_model(self,info):
+        draw_info=info
+        for i in draw_info:
+            c=cabinet(name=i)
+            model_info = c.draw_info
+            line_info = model_info[0]
+            wenzi_info = model_info[1]
+            arc_info = model_info[2]
+            block_start_point = APoint(0, 0)
+            blockObj = acad.ActiveDocument.Blocks.Add(block_start_point, wenzi_info[0])
+            self.draw_line(blockObj, line_info)
+            self.draw_wenzi(blockObj, wenzi_info)
+            self.blocklistinfo.append(wenzi_info[0])
+    #画BN块
+    def draw_BN_model(self,info):
+        BN_info = info
+        for item in BN_info:
+            c = BN(item)
+            model_info = c.draw_info
+            line_info = model_info[0]
+            wenzi_info = model_info[1]
+            arc_info = model_info[2]
+            block_start_point = APoint(0, 0)
+            blockObj = acad.ActiveDocument.Blocks.Add(block_start_point, wenzi_info[0])
+            self.draw_line(blockObj, line_info)
+            self.draw_wenzi(blockObj, wenzi_info)
+            self.blocklistinfo.append(wenzi_info[0])
+    #依据返回的excel处理的result结果，开始画块
     def draw_cad_model(self,result=None):
-        pass
+        from_cabinet_info=result["source"]
+        to_cabinet_info=result["destination"]
+        from_BN_info=result["place from"]
+        to_BN_info=result["place to"]
+        #画cabinet块
+        self.draw_cabinet_model(from_cabinet_info)
+        # 画BN块
+        self.draw_BN_model(from_BN_info)
+        # 画BN块
+        self.draw_BN_model(to_BN_info)
+        # 画cabinet块
+        self.draw_cabinet_model(to_cabinet_info)
+    #具体每一列的布置块
+    def place_cabinet(self,place_info, block_info):
+        for insertionPnt, load_name in zip(place_info, block_info):
+            acad.model.InsertBlock(insertionPnt, load_name, 1, 1, 1, 0)
+    def place_kuai(self,blockinfo):
+        for i in range(33):
+            self.place_info.append(APoint(0, i * 15))
+        for i in range(33):
+            self.place_info.append(APoint(100,i*15))
+        for i in range(33):
+            self.place_info.append(APoint(225, i * 15))
+        for i in range(33):
+            self.place_info.append(APoint(250,i*15))
+        self.place_cabinet(self.place_info, blockinfo)
+        print(self.place_info,blockinfo)
+    #画电缆
+    def draw_cable(self):
+        for i in range(33):
+            p1=APoint(125,7.5+i*15)
+            p2=APoint(225,7.5+i*15)
+            acad.model.AddLine(p1, p2)
+    #写电缆编号
+    def draw_cable_name(self):
+        for i in range(33):
+            p1=APoint(150,8+i*15)
+            acad.model.AddText('电缆 %s' % (i+1), p1, 5)
 """
 创立一个新frame
 创建输出CAD文件frame
@@ -186,5 +284,6 @@ class basic_window(Tk):
         self.geometry("500x100")
 
 if __name__=="__main__":
+    acad = Autocad(create_if_not_exists=True)
     root=basic_window()
     root.mainloop()
