@@ -51,3 +51,9 @@ draw_block(model=l2)
 draw_block(model=l3)
 place_info=[APoint(0,0),APoint(1100,0),APoint(0,600)]
 place_block(place_info,block_info)
+
+for obj in acad.iter_objects("Block"):
+    # 以下获取块的属性信息
+    # 如果想获取某一特定块的属性信息可以用ObjectID识别特定块
+    print(obj.ObjectName)
+    # print(dir(obj))

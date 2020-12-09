@@ -1,7 +1,7 @@
-from CAD.draw_seconary_drawing.excel import read_excel
+from first_edtion.excel import read_excel
 from pyautocad import Autocad, APoint
-from CAD.draw_seconary_drawing.cabinet_demo import cabinet
-from CAD.draw_seconary_drawing.BN_demo import BN
+from first_edtion.cabinet_demo import cabinet
+from first_edtion.BN_demo import BN
 acad=Autocad(create_if_not_exists=True)
 block_info1=[]
 block_info2=[]

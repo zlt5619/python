@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilenames
-from CAD.draw_seconary_drawing.cad_function import drawCAD
+from first_edtion.cad_function import drawCAD
 
 
 
