@@ -6,7 +6,7 @@ import xlrd
 from xlwt import *
 #按钮Frame
 from xlwt import Workbook
-from Program.AutoCad.instrument.draw_cad_file import draw_cad
+
 
 class b_Frame(Frame):
     def __init__(self,frame,input_Frame=None,row_Frame=None,input_file_frame=None):
