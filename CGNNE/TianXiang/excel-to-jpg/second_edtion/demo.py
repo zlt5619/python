@@ -1,4 +1,6 @@
 from datetime import datetime
+import matplotlib.pyplot as plt
+import matplotlib
 import xlwt
 import xlrd
 from tkinter import *
@@ -170,8 +172,8 @@ class Excel_file(object):
         TBA_dict=dict()
         for k,v in self.jizushu_dict.items():
             demo1= (30*24*self.jizushu_dict[k]-self.guzhangtingji_dict[k])/(30*24*self.jizushu_dict[k])*100
-            demo2=str(round(demo1,2))
-            TBA_dict[k]=demo2+"%"
+            demo2=round(demo1,2)
+            TBA_dict[k]=demo2
         return TBA_dict
 
     #计算单位容量故障次数
@@ -229,20 +231,66 @@ def Write_Excel_file(path=None, fengdianchang_list=None, MTBF=None, MTTR=None, T
 
         workbook.save(path + "/demo.xls")
 
+def huazhuxingtu(target_dict):
+    target_dict=target_dict
+    chanzhan_list=target_dict.keys()
+    shuzhi_list=list(target_dict.values())
+    y_shuzhi_list=[]
+    process_changzhan_list = []
+
+    #
+    for i in chanzhan_list:
+        i=i[:-3]
+        process_changzhan_list.append(i)
+
+    for i in shuzhi_list:
+        y_shuzhi_list.append(i)
+
+    matplotlib.rcParams["font.sans-serif"] = ["SimHei"]
+    matplotlib.rcParams["axes.unicode_minus"] = False
+
+    # 创建图表的基础
+    plt.figure(figsize=(12, 4))
+
+    # 限定y坐标的取值范围
+    y_shuzhi_list.sort()
+
+    plt.ylim((y_shuzhi_list[0], y_shuzhi_list[-1]))
+
+    plt.xticks(range(len(chanzhan_list)), process_changzhan_list, rotation=0)
+
+    # 画柱形图
+    plt.bar(chanzhan_list, shuzhi_list, width=0.4, color='dodgerblue')
+
+    # 展示图形
+    plt.show()
+
 class input_file_frame(Frame):
     def __init__(self,root=None):
         super().__init__(root)
         self.path1 = StringVar()
         self.filepath=None
+        self.target_dict=None
         L1 = Label(self, text="输入文件:")
-        L1.grid(row=0, column=0,pady=50,padx=20)
+        L1.grid(row=0, column=0,pady=30,padx=20)
         E1 = Entry(self, textvariable=self.path1, width=30)
-        E1.grid(row=0, column=1,pady=50)
+        E1.grid(row=0, column=1,pady=30)
         # command 后面的函数不能有参数，否则会直接执行，跳出文本选择框，需要在函数前加lambda，变成匿名函数
         B1 = Button(self, text="...", command=lambda: self.selectPath(self.path1), height=1)
-        B1.grid(row=0, column=2, padx=10,pady=50)
+        B1.grid(row=0, column=2, padx=10,pady=30)
         B2 = Button(self, text="生成Excel文件", command=lambda: self.read_excel(), height=1)
-        B2.grid(row=1, column=0, padx=10,pady=0)
+        B2.grid(row=1, column=0, padx=5,pady=0)
+        B3 = Button(self, text="生成MTBF表", command=lambda: self.draw_MTBF_picture(), height=1)
+        B3.grid(row=1, column=1, padx=5, pady=0)
+        B4 = Button(self, text="生成MTTR表", command=lambda: self.draw_MTTR_picture(), height=1)
+        B4.grid(row=1, column=2, padx=5, pady=0)
+        B5 = Button(self, text="生成TBA表", command=lambda: self.draw_TBA_picture(), height=1)
+        B5.grid(row=2, column=0, padx=5, pady=10)
+        B6 = Button(self, text="生成单位容量故障次数表", command=lambda: self.draw_guzhangcishu_picture(), height=1)
+        B6.grid(row=2, column=1, padx=5, pady=10)
+        B7 = Button(self, text="生成单位容量经济损失表", command=lambda: self.draw_jingjisunshi_picture(), height=1)
+        B7.grid(row=2, column=2, padx=5, pady=10)
+
     def selectPath(self,path1):
         path_ = askopenfilename()
         path1.set(path_)
@@ -255,9 +303,37 @@ class input_file_frame(Frame):
         Write_Excel_file(path1, e.fengdianchang_list, e.MTBF_dict, e.MTTR_dict, e.TBA_dict,
                          e.danwenrongliangguzhangcishu_dict, e.danweijingjisunshi_dict)
 
+    def draw_picture(self):
+
+        huazhuxingtu(self.target_dict)
+
+    def draw_MTBF_picture(self):
+        e = Excel_file(self.filepath)
+        self.target_dict=e.MTBF_dict
+        self.draw_picture()
+
+    def draw_MTTR_picture(self):
+        e = Excel_file(self.filepath)
+        self.target_dict = e.MTTR_dict
+        self.draw_picture()
+
+    def draw_TBA_picture(self):
+        e = Excel_file(self.filepath)
+        self.target_dict = e.TBA_dict
+        self.draw_picture()
+
+    def draw_guzhangcishu_picture(self):
+        e = Excel_file(self.filepath)
+        self.target_dict = e.danwenrongliangguzhangcishu_dict
+        self.draw_picture()
+
+    def draw_jingjisunshi_picture(self):
+        e = Excel_file(self.filepath)
+        self.target_dict = e.danweijingjisunshi_dict
+        self.draw_picture()
 
 root=Tk(className="Excel文件处理")
-root.geometry("400x200")
+root.geometry("500x200")
 
 if_frame=input_file_frame(root)
 if_frame.pack()

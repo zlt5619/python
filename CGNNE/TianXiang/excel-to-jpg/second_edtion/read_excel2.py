@@ -233,8 +233,9 @@ def draw_picture(fengdianchang_list=None,MTBF=None,MTTR=None,TBA=None,guzhangcis
 e=Excel_file(path)
 # print(e.danweijingjisunshi_dict)
 
-Write_Excel_file('C:/Users/zlt/Desktop',e.fengdianchang_list,e.MTBF_dict,e.MTTR_dict,e.TBA_dict,e.danwenrongliangguzhangcishu_dict,e.danweijingjisunshi_dict)
+# Write_Excel_file('C:/Users/zlt/Desktop',e.fengdianchang_list,e.MTBF_dict,e.MTTR_dict,e.TBA_dict,e.danwenrongliangguzhangcishu_dict,e.danweijingjisunshi_dict)
 
+print(e.MTTR_dict)
 
 
 
