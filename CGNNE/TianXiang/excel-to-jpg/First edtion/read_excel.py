@@ -128,7 +128,7 @@ for k in Fengji_num.keys():
 # print(MTBF)
 
 workbook=xlwt.Workbook()
-worksheet=workbook.add_sheet('demo')
+worksheet=workbook.add_sheet('test')
 
 n1=[]
 n2=[]
@@ -151,7 +151,7 @@ MTBF=list(MTBF)
 worksheet.write(0,0,MTBF[0])
 worksheet.write(0,1,MTBF[1])
 
-workbook.save('demo.xls')
+workbook.save('test.xls')
 
 
 

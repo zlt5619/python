@@ -6,13 +6,13 @@ import xlrd
 “excel名3”：{“sheet名1：sheet_data“，”sheet名2：sheet_data”}，。。。}
 调用数据时，从[excel表名][sheet名][行/列数]
 print(self.excel_row_data)
-print(self.excel_row_data["demo"])
-print(self.excel_row_data["demo"]["Sheet1"])
-print(self.excel_row_data["demo"]["Sheet1"][1])
+print(self.excel_row_data["test"])
+print(self.excel_row_data["test"]["Sheet1"])
+print(self.excel_row_data["test"]["Sheet1"][1])
 print(self.excel_col_data)
-print(self.excel_col_data["demo - 副本"])
-print(self.excel_col_data["demo - 副本"]["Sheet2"])
-print(self.excel_col_data["demo - 副本"]["Sheet2"][2])
+print(self.excel_col_data["test - 副本"])
+print(self.excel_col_data["test - 副本"]["Sheet2"])
+print(self.excel_col_data["test - 副本"]["Sheet2"][2])
 """
 class Excel_Processor():
     def __init__(self,filelists=[]):
@@ -26,13 +26,13 @@ class Excel_Processor():
         else:
             self.process_multiple_excels()
         print(self.excel_row_data)
-        # print(self.excel_row_data["demo"])
-        # print(self.excel_row_data["demo"]["Sheet1"])
-        # print(self.excel_row_data["demo"]["Sheet1"][1])
+        # print(self.excel_row_data["test"])
+        # print(self.excel_row_data["test"]["Sheet1"])
+        # print(self.excel_row_data["test"]["Sheet1"][1])
         print(self.excel_col_data)
-        # print(self.excel_col_data["demo - 副本"])
-        # print(self.excel_col_data["demo - 副本"]["Sheet2"])
-        # print(self.excel_col_data["demo - 副本"]["Sheet2"][2])
+        # print(self.excel_col_data["test - 副本"])
+        # print(self.excel_col_data["test - 副本"]["Sheet2"])
+        # print(self.excel_col_data["test - 副本"]["Sheet2"][2])
 
     #处理单个文件
     def process_single_excel(self,file):
@@ -71,7 +71,7 @@ class Excel_Processor():
         for i in self.filelists:
             self.process_single_excel(i)
 
-# e=Excel_Processor(filelists=["D:\\BaiduNetdiskDownload\\二次cad资料\\demo.xlsx"])
-# e=Excel_Processor(filelists=["D:\\BaiduNetdiskDownload\\二次cad资料\\demo.xlsx","D:\\BaiduNetdiskDownload\\二次cad资料\\demo - 副本.xlsx"""])
+# e=Excel_Processor(filelists=["D:\\BaiduNetdiskDownload\\二次cad资料\\test.xlsx"])
+# e=Excel_Processor(filelists=["D:\\BaiduNetdiskDownload\\二次cad资料\\test.xlsx","D:\\BaiduNetdiskDownload\\二次cad资料\\test - 副本.xlsx"""])
 # e=Excel_Processor(filelists=['C:/Users/zlt/Desktop/gengxie/新建 Microsoft Excel 工作表 - 副本.xlsx', 'C:/Users/zlt/Desktop/gengxie/新建 Microsoft Excel 工作表.xlsx'])
 e=Excel_Processor(filelists=['C:/Users/zlt/Desktop/gengxie/新建 Microsoft Excel 工作表.xlsx'])

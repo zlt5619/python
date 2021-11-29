@@ -226,7 +226,7 @@ def Write_Excel_file(path=None,fengdianchang_list=None,MTBF=None,MTTR=None,TBA=N
             worksheet.write(i, 5, guzhangcishu[fengdianchang_list[i-1]])
             worksheet.write(i, 6, jingjisunshi[fengdianchang_list[i-1]])
 
-        workbook.save(path+"/demo.xls")
+        workbook.save(path+"/test.xls")
 
 def draw_picture(fengdianchang_list=None,MTBF=None,MTTR=None,TBA=None,guzhangcishu=None,jingjisunshi=None):
     pass
